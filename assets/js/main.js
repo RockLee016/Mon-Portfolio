@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .catch ((error) => {
-                console.log(error);
+                // console.log(error);
                 success_icone.style.display = "none";
                 message_api.innerText = `Une erreur est survenue dans le traitement des données. Veuillez réessayer dans un instant !`;
                 formSuccess.style.backgroundColor = "#e74c3c"; // Rouge pour l'erreur
