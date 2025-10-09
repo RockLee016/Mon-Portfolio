@@ -100,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailInput = document.getElementById('email');
         const messageInput = document.getElementById('message');
         const formSuccess = document.getElementById('form-success');
+        const message_api = document.getElementById('message_api');
+        const success_icone = document.getElementById('success_icone');
 
         const nameError = document.getElementById('name-error');
         const emailError = document.getElementById('email-error');
@@ -132,21 +134,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isValid) {
-            console.log('Form data:', {
-                name: nameInput.value.trim(),
-                email: emailInput.value.trim(),
-                message: messageInput.value.trim()
+            sendDataByAjax (
+                "https://contact-client.nathanbgaena.workers.dev/",
+                "POST",
+                {
+                    nom: nameInput.value.trim(),
+                    email: emailInput.value.trim(),
+                    message: messageInput.value.trim()
+                }
+            )
+            .then ((promise) => {
+                if(promise.status){
+                    success_icone.style.display = "block";
+                    message_api.innerText= promise.message;
+                    formSuccess.style.backgroundColor = "#10b981"; // Rouge pour l'erreur
+                    formSuccess.classList.add('show');
+
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    messageInput.value = '';
+
+                    setTimeout(() => {
+                        formSuccess.classList.remove('show');
+                        message_api.innerText= "";
+                    }, 5000);
+                }else{
+                    success_icone.style.display = "none";
+                    message_api.innerText= promise.message;
+                    formSuccess.style.backgroundColor = "#e74c3c"; // Rouge pour l'erreur
+                    formSuccess.classList.add('show');
+                    
+                    setTimeout(() => {
+                        formSuccess.classList.remove('show');
+                        message_api.innerText= "";
+                    }, 5000);
+                }
+            })
+            .catch ((error) => {
+                console.log(error);
+                success_icone.style.display = "none";
+                message_api.innerText = `Une erreur est survenue dans le traitement des données. Veuillez réessayer dans un instant !`;
+                formSuccess.style.backgroundColor = "#e74c3c"; // Rouge pour l'erreur
+                formSuccess.classList.add('show');
+                
+                setTimeout(() => {
+                    formSuccess.classList.remove('show');
+                    message_api.innerText= "";
+                }, 5000);
             });
+            // console.log('Form data:', {
+            //     name: nameInput.value.trim(),
+            //     email: emailInput.value.trim(),
+            //     message: messageInput.value.trim()
+            // });
 
-            formSuccess.classList.add('show');
+            // formSuccess.classList.add('show');
 
-            nameInput.value = '';
-            emailInput.value = '';
-            messageInput.value = '';
+            // nameInput.value = '';
+            // emailInput.value = '';
+            // messageInput.value = '';
 
-            setTimeout(() => {
-                formSuccess.classList.remove('show');
-            }, 5000);
+            // setTimeout(() => {
+            //     formSuccess.classList.remove('show');
+            // }, 5000);
         }
     });
 
@@ -169,3 +219,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+function sendDataByAjax (url, methode, data) {
+    return new Promise ((resolve, reject) => {
+        $.ajax({
+            url: url,
+            type: methode,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (data) {
+                if(!data.status){
+                    // Cela veut dire qu'il y a eu une erreur et que le code HTTP est 200
+                    reject({
+                        status: data.status,
+                        message: data.message,
+                        message_admin: data.message_admin
+                    })
+                }
+                else{
+                    // Cela veut dire qu'il n'y a pas eu d'erreur
+                    resolve({
+                        status: data.status,
+                        message: data.message,
+                        message_admin: data.message_admin
+                    })
+                }
+            },
+            error: function () {
+                // la fonction atteindra cette erreur que si elle n'arrive pas à se connecter à l'url
+                reject(new Error ("oups"));
+            }
+        })
+    });
+}
