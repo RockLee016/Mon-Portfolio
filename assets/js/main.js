@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const formSuccess = document.getElementById('form-success');
         const message_api = document.getElementById('message_api');
         const success_icone = document.getElementById('success_icone');
+        const contener_btn = document.getElementById('contener_btn');
+        const contener_loader = document.getElementById('contener_loader');
+        const btn_envoyer = document.getElementById('btn_envoyer');
 
         const nameError = document.getElementById('name-error');
         const emailError = document.getElementById('email-error');
@@ -111,12 +114,19 @@ document.addEventListener('DOMContentLoaded', () => {
         emailError.style.display = 'none';
         messageError.style.display = 'none';
         formSuccess.classList.remove('show');
+        btn_envoyer.setAttribute('disabled', 'true');
+        contener_btn.style.display = "none";
+        contener_loader.style.display = "block";
 
         let isValid = true;
 
         if (nameInput.value.trim().length < 2) {
             nameError.textContent = 'Le nom doit contenir au moins 2 caractères';
             nameError.style.display = 'block';
+
+            contener_btn.style.display = "block";
+            contener_loader.style.display = "none";
+            btn_envoyer.setAttribute('disabled', 'false');
             isValid = false;
         }
 
@@ -124,6 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!emailRegex.test(emailInput.value.trim())) {
             emailError.textContent = 'Veuillez entrer une adresse email valide';
             emailError.style.display = 'block';
+
+            contener_btn.style.display = "block";
+            contener_loader.style.display = "none";
+            btn_envoyer.setAttribute('disabled', 'false');
             isValid = false;
         }
 
@@ -150,6 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     formSuccess.style.backgroundColor = "#10b981"; // Rouge pour l'erreur
                     formSuccess.classList.add('show');
 
+                    contener_btn.style.display = "block";
+                    contener_loader.style.display = "none";
+                    btn_envoyer.setAttribute('disabled', 'false');
+
                     nameInput.value = '';
                     emailInput.value = '';
                     messageInput.value = '';
@@ -163,6 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     message_api.innerText= promise.message;
                     formSuccess.style.backgroundColor = "#e74c3c"; // Rouge pour l'erreur
                     formSuccess.classList.add('show');
+
+                    contener_btn.style.display = "block";
+                    contener_loader.style.display = "none";
+                    btn_envoyer.setAttribute('disabled', 'false');
                     
                     setTimeout(() => {
                         formSuccess.classList.remove('show');
@@ -176,6 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 message_api.innerText = `Une erreur est survenue dans le traitement des données. Veuillez réessayer dans un instant !`;
                 formSuccess.style.backgroundColor = "#e74c3c"; // Rouge pour l'erreur
                 formSuccess.classList.add('show');
+
+                contener_btn.style.display = "block";
+                contener_loader.style.display = "none";
+                btn_envoyer.setAttribute('disabled', 'false');
                 
                 setTimeout(() => {
                     formSuccess.classList.remove('show');
